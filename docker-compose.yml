@@ -1,0 +1,25 @@
+version: '2'
+services:
+  web:
+    build: .
+    volumes:
+      - "./:/discovery_ads"
+    command: bash -c 'bin/webpack --watch --progress --color & bin/rails s -p 3000 -b "0.0.0.0"'
+    ports:
+      - "3000:3000"
+    depends_on:
+      - selenium
+      - postgres
+    links:
+      - postgres:postgres
+      - selenium:selenium
+  postgres:
+    image: postgres:10.8
+    volumes:
+      - "./.data/postgres:/var/lib/postgresql/data"
+  selenium:
+    image: selenium/standalone-chrome-debug
+    ports:
+      - "4444:4444"
+      - "5900:5900"
+    shm_size: 512M
