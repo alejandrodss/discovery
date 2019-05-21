@@ -257,7 +257,7 @@ DEPENDENCIES
   capybara
   factory_bot_rails
   falcon
-  haml-rails
+  haml-rails (~> 2.0)
   pg (>= 0.18, < 2.0)
   rails (~> 5.2.3)
   rspec-rails (~> 3.8)

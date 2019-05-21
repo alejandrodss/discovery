@@ -1,0 +1,11 @@
+%h1= "List of companies"
+%table
+  %tr
+    %th="Id"
+    %th="Name"
+    %th="Legal Representative"
+  - @companies.each do |company|
+    %tr
+      %td= company.company_identification
+      %td= company.name
+      %td= company.legal_representative
