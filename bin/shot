@@ -1,0 +1,38 @@
+#!/bin/sh
+
+RAILS_ENV=test
+
+bundle exec rspec spec --fail-fast 2>&1 | tee tmp/rspec_manifest
+
+bin/check_rspec
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+bin/check_brakeman
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+bin/check_rails_best_practices
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+bin/check_rubycritic
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+bin/check_ifs_in_views
+if [ $? -ne 0 ]; then
+  echo "New 'ifs' in views found"
+  cat tmp/new_ifs_in_views
+  exit 1
+fi
+
+bin/check_instance_variables_in_controllers
+if [ $? -ne 0 ]; then
+  exit 1
+fi

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+echo "Running brakeman..."
+# extracts the summany before updating the manifest
+INITIAL_LINE=$(grep -n "Warning Type" brakeman_manifest | head -n1 | cut -d":" -f1)
+LAST_LINE=$(grep -n "SQL Injection" brakeman_manifest | head -n1 | cut -d":" -f1)
+sed -n "$INITIAL_LINE","$LAST_LINE"p brakeman_manifest > tmp/brakeman_summary_before_changes
+BRAKEMAN_SCORES_BEFORE_CHANGES=$(grep -E '[0-9]+' tmp/brakeman_summary_before_changes | xargs)
+
+bundle exec brakeman -o tmp/brakeman_manifest.html
+w3m tmp/brakeman_manifest.html > tmp/brakeman_manifest
+
+INITIAL_LINE=$(grep -n "Warning Type" tmp/brakeman_manifest | head -n1 | cut -d":" -f1)
+LAST_LINE=$(grep -n "SQL Injection" tmp/brakeman_manifest | head -n1 | cut -d":" -f1)
+sed -n "$INITIAL_LINE","$LAST_LINE"p tmp/brakeman_manifest > tmp/brakeman_summary_after_changes
+BRAKEMAN_SCORES_AFTER_CHANGES=$(grep -E '[0-9]+' tmp/brakeman_summary_after_changes | xargs)
+
+ruby bin/compare_brakeman_scores.rb "$BRAKEMAN_SCORES_BEFORE_CHANGES" "$BRAKEMAN_SCORES_AFTER_CHANGES"
+if [ $? -eq 0 ]; then
+  cp tmp/brakeman_summary_after_changes brakeman_manifest
+else
+  exit 1
+fi

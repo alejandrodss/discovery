@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "Running RubyCritic.."
+
+find lib/ -maxdepth 1 -type d,f | egrep -v 'generators|.keep|lib\/$' |  xargs bundle exec rubycritic app/ --minimum-score 95.0 --no-browser
+
+if [ $? -ne 0 ]; then
+  exit 1
+else
+  RUBYCRITIC_SCORE=$(grep "var score =" tmp/rubycritic/overview.html | awk '{ print $4 }' | cut -d ";" -f1)
+  sed -i "s~\(Score-\)[0-9\.]\+~\1${RUBYCRITIC_SCORE}~g" README.md
+
+  echo -e "\033[0;32mCode Quality OK\033[0m\n"
+fi

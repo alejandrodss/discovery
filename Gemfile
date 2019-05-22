@@ -27,6 +27,7 @@ gem 'turbolinks', '~> 5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'haml-rails', '~> 2.0'
+gem 'json', '>=2.2.0'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.8'
@@ -38,5 +39,10 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+
+  # Quality Code Assurance
+  gem 'rubycritic', require: false
+  gem 'rails_best_practices'
+  gem 'brakeman'
 end
 
